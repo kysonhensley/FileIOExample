@@ -1,4 +1,6 @@
-﻿namespace FileIOExample
+﻿using System.Diagnostics.Metrics;
+
+namespace FileIOExample
 {
     internal class Program
     {
@@ -7,7 +9,8 @@
             //WriteToFile();
             //AppendToFile();
             //ReadFile();
-            ReadEntireFile("..\\..\\..\\TestFile.txt");
+            //ReadEntireFile("..\\..\\..\\TestFile.txt");
+            FileToArray("..\\..\\..\\TestFile.txt");
 
             //pause
             Console.Read();
@@ -47,6 +50,47 @@
                     Console.WriteLine(testFile.ReadToEnd());
                 } while (!testFile.EndOfStream);
             }
+        }
+
+        static int CountOfLinesIn(string filePath)
+        {
+            int count = 0;
+            using (StreamReader testFile = new StreamReader(filePath))
+            {
+                do
+                {
+                    testFile.ReadLine();
+                    count++;
+                } while (!testFile.EndOfStream);
+            }
+            return count;
+        }
+        static string[,] FileToArray(string filePath)
+        {
+            string[,] customerData = new string[5, CountOfLinesIn(filePath)];
+            string[] temp;
+            int counter = 0;
+
+            using (StreamReader testFile = new StreamReader(filePath))
+            {
+                do
+                {
+                    temp = testFile.ReadLine().Split(",");
+                    if (temp.Length == 5)
+                    {
+                        temp[0] = temp[0].Replace("\"$$","");
+                        customerData[0, counter] = temp[0];
+                        customerData[1, counter] = temp[1];
+                        customerData[2, counter] = temp[2];
+                        customerData[3, counter] = temp[3];
+                        customerData[4, counter] = temp[4];
+                    }
+                    Console.WriteLine(temp[0]);
+                    counter++;
+                } while (!testFile.EndOfStream);
+            }
+
+            return customerData;
         }
     }
 }
